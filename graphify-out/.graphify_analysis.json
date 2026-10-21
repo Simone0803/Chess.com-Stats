@@ -1,0 +1,319 @@
+{
+  "communities": {
+    "0": [
+      "csv",
+      "datetime",
+      "json",
+      "sqlite3",
+      "src_chess_data",
+      "src_chess_data_chesscom_game_url_id",
+      "src_chess_data_connect",
+      "src_chess_data_count_mainline_plies",
+      "src_chess_data_export_json",
+      "src_chess_data_export_pgn",
+      "src_chess_data_game_from_headers",
+      "src_chess_data_game_rows",
+      "src_chess_data_import_pgn",
+      "src_chess_data_infer_local_username",
+      "src_chess_data_int_or_none",
+      "src_chess_data_pgn_epoch",
+      "src_chess_data_py_path",
+      "src_chess_data_rationale_1",
+      "src_chess_data_rationale_248",
+      "src_chess_data_rationale_299",
+      "src_chess_data_rationale_39",
+      "src_chess_data_rationale_88",
+      "src_chess_data_read_player_stats",
+      "src_chess_data_result_for",
+      "src_chess_data_save_games",
+      "src_chess_data_save_player_stats",
+      "src_chess_data_simple_pgn_records",
+      "src_chess_data_stable_game_id",
+      "src_import_games",
+      "src_import_games_main",
+      "src_import_games_rationale_1",
+      "tests_test_core_storageandnetworktests_test_archive_exports_are_reproducible",
+      "tests_test_core_storageandnetworktests_test_generic_chesscom_site_uses_each_pgn_link_for_identity",
+      "tests_test_core_storageandnetworktests_test_stable_id_and_upsert_deduplicate",
+      "tests_test_core_storageandnetworktests_test_username_inference_requires_clear_active_side_majority",
+      "time",
+      "typing"
+    ],
+    "1": [
+      "cache_data",
+      "collections",
+      "dashboard_v4",
+      "dashboard_v4_api_signature",
+      "dashboard_v4_archive_signature",
+      "dashboard_v4_archive_signature_rating",
+      "dashboard_v4_archived_rows",
+      "dashboard_v4_engine_display_id",
+      "dashboard_v4_game_label",
+      "dashboard_v4_infer_username_from_moves",
+      "dashboard_v4_load",
+      "dashboard_v4_outcome_from_api",
+      "dashboard_v4_rationale_46",
+      "numpy",
+      "pandas",
+      "pathlib",
+      "plotly_express",
+      "re",
+      "src_chess_data_parse_pgn_headers",
+      "src_chess_data_rationale_58",
+      "src_process_analysis_v4",
+      "src_process_analysis_v4_find_col",
+      "src_process_analysis_v4_main",
+      "src_process_analysis_v4_main_count_class",
+      "src_process_analysis_v4_main_summary",
+      "src_process_analysis_v4_norm",
+      "src_process_analysis_v4_parse_pgn_headers",
+      "src_process_analysis_v4_parse_pgn_headers_make_game_id",
+      "src_process_analysis_v4_parse_tc",
+      "src_process_analysis_v4_rationale_44",
+      "streamlit",
+      "tests_test_core_storageandnetworktests_test_pgn_headers_preserve_opening_time_and_termination",
+      "urllib_parse",
+      "zoneinfo"
+    ],
+    "2": [
+      "hashlib",
+      "io",
+      "math",
+      "src_engine_analysis",
+      "src_engine_analysis_analyze_pgn",
+      "src_engine_analysis_analyze_pgn_phase_for",
+      "src_engine_analysis_material_points",
+      "src_engine_analysis_missed_mate_opportunity",
+      "src_engine_analysis_py_path",
+      "src_engine_analysis_rationale_1",
+      "src_engine_analysis_rationale_16",
+      "src_engine_analysis_rationale_26",
+      "src_engine_analysis_rationale_34",
+      "src_metrics",
+      "src_metrics_classify_cpl",
+      "src_metrics_comparable_cpl",
+      "src_metrics_move_accuracy",
+      "src_metrics_mover_cpl",
+      "src_metrics_rationale_1",
+      "src_metrics_rationale_27",
+      "src_metrics_rationale_33",
+      "src_metrics_rationale_9",
+      "tests_test_core_metrictests_test_engine_metric_sign_threshold_mate_cases",
+      "tests_test_core_storageandnetworktests_test_material_balance_uses_standard_piece_values",
+      "tests_test_core_storageandnetworktests_test_missed_forced_mate_is_side_aware_and_conservative"
+    ],
+    "3": [
+      "src_chess_data_chesscomclient",
+      "src_chess_data_chesscomclient_games",
+      "src_chess_data_chesscomclient_get",
+      "src_chess_data_chesscomclient_init",
+      "src_chess_data_chesscomclient_player_stats",
+      "src_chess_data_jsonresponse",
+      "src_chess_data_jsonresponse_init",
+      "src_chess_data_jsonresponse_json",
+      "src_chess_data_rationale_392",
+      "tests_test_core_fakeresponse",
+      "tests_test_core_fakeresponse_init",
+      "tests_test_core_fakeresponse_json",
+      "tests_test_core_fakeresponse_raise_for_status",
+      "tests_test_core_fakesession",
+      "tests_test_core_fakesession_get",
+      "tests_test_core_fakesession_init",
+      "tests_test_core_storageandnetworktests",
+      "tests_test_core_storageandnetworktests_test_api_304_revalidates_cached_json",
+      "tests_test_core_storageandnetworktests_test_api_retry_cache_and_archive_list",
+      "tests_test_core_storageandnetworktests_test_missing_metadata_and_pgn_import",
+      "tests_test_core_storageandnetworktests_test_player_stats_persistence"
+    ],
+    "4": [
+      "dataframe",
+      "requests",
+      "src_metrics_longest_streak",
+      "src_metrics_monthly_summary",
+      "src_metrics_prepare_filters",
+      "src_metrics_rating_summary",
+      "src_metrics_rationale_83",
+      "src_metrics_result_summary",
+      "tests_test_core",
+      "tests_test_core_engineclitests",
+      "tests_test_core_metrictests",
+      "tests_test_core_metrictests_setup",
+      "tests_test_core_metrictests_test_filter_by_time_color_and_period",
+      "tests_test_core_metrictests_test_month_aggregation_matches_game_rows",
+      "tests_test_core_metrictests_test_rating_peak_and_streak",
+      "tests_test_core_metrictests_test_result_percentages_and_empty",
+      "tests_test_core_metrictests_test_time_control_parse",
+      "unittest",
+      "unittest_mock"
+    ],
+    "5": [
+      "argparse",
+      "os",
+      "src_analyze_games",
+      "src_analyze_games_atomic_json",
+      "src_analyze_games_enrich_summary",
+      "src_analyze_games_main",
+      "src_analyze_games_mean",
+      "src_analyze_games_py_path",
+      "src_analyze_games_rationale_1",
+      "src_analyze_games_rationale_18",
+      "src_analyze_games_write_checkpoint",
+      "src_chess_data_legacy_csv_game_id",
+      "src_chess_data_legacy_csv_game_ids",
+      "src_chess_data_rationale_52",
+      "src_chess_data_rationale_70",
+      "tempfile",
+      "tests_test_core_engineclitests_test_resume_keeps_prior_results_and_analyzes_selected_game",
+      "tests_test_core_storageandnetworktests_test_legacy_game_id_matches_existing_processor"
+    ]
+  },
+  "cohesion": {
+    "0": 0.12912912912912913,
+    "1": 0.1051693404634581,
+    "2": 0.14,
+    "3": 0.1523809523809524,
+    "4": 0.15789473684210525,
+    "5": 0.1830065359477124
+  },
+  "gods": [
+    {
+      "id": "src_chess_data_connect",
+      "label": "connect()",
+      "degree": 18
+    },
+    {
+      "id": "src_engine_analysis_analyze_pgn",
+      "label": "analyze_pgn()",
+      "degree": 16
+    },
+    {
+      "id": "tests_test_core_storageandnetworktests",
+      "label": "StorageAndNetworkTests",
+      "degree": 14
+    },
+    {
+      "id": "src_chess_data_import_pgn",
+      "label": "import_pgn()",
+      "degree": 13
+    },
+    {
+      "id": "src_chess_data_chesscomclient",
+      "label": "ChessComClient",
+      "degree": 12
+    },
+    {
+      "id": "src_chess_data_save_games",
+      "label": "save_games()",
+      "degree": 12
+    },
+    {
+      "id": "src_import_games_main",
+      "label": "main()",
+      "degree": 11
+    },
+    {
+      "id": "src_analyze_games_main",
+      "label": "main()",
+      "degree": 11
+    },
+    {
+      "id": "src_chess_data_game_rows",
+      "label": "game_rows()",
+      "degree": 10
+    },
+    {
+      "id": "src_chess_data_infer_local_username",
+      "label": "infer_local_username()",
+      "degree": 10
+    }
+  ],
+  "surprises": [
+    {
+      "source": "StorageAndNetworkTests",
+      "target": "ChessComClient",
+      "source_files": [
+        "tests/test_core.py",
+        "src/chess_data.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "archived_rows()",
+      "target": "game_rows()",
+      "source_files": [
+        "dashboard_v4.py",
+        "src/chess_data.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "archived_rows()",
+      "target": "legacy_csv_game_ids()",
+      "source_files": [
+        "dashboard_v4.py",
+        "src/chess_data.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "archived_rows()",
+      "target": "parse_pgn_headers()",
+      "source_files": [
+        "dashboard_v4.py",
+        "src/chess_data.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "main()",
+      "target": "ChessComClient",
+      "source_files": [
+        "src/import_games.py",
+        "src/chess_data.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `analyze_pgn()` connect `engine_analysis.py` to `chess_data.py`, `analyze_games.py`?",
+      "why": "High betweenness centrality (0.053) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `chess_data.py` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.12912912912912913 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `connect()` connect `chess_data.py` to `dashboard_v4.py`, `engine_analysis.py`, `StorageAndNetworkTests`, `test_core.py`, `analyze_games.py`?",
+      "why": "High betweenness centrality (0.046) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `dashboard_v4.py` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1051693404634581 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `ChessComClient` connect `StorageAndNetworkTests` to `chess_data.py`, `test_core.py`?",
+      "why": "High betweenness centrality (0.043) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `engine_analysis.py` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
