@@ -1,9 +1,10 @@
 from pathlib import Path
 import re
 import hashlib
-from urllib.parse import unquote
 import pandas as pd
 import numpy as np
+
+from .openings import load_eco_table, resolve_opening
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data'
@@ -40,6 +41,18 @@ def parse_tc(v):
     return (cat, f'{initial//60}:{initial%60:02d}+{inc}' if inc else f'{initial//60}:{initial%60:02d}', initial, inc, effective)
 
 
+def player_move_mask(color, player_color):
+    """True only where both colours are present and equal.
+
+    A missing colour is never the player's move. Pandas 2 compared the literal
+    strings 'nan' and so counted such moves as the player's; pandas 3 keeps NaN,
+    so the rule is now stated explicitly and no longer depends on the version.
+    """
+    mover_side = color.astype('string').str.lower()
+    player_side = player_color.astype('string').str.lower()
+    return (mover_side.notna() & player_side.notna() & mover_side.eq(player_side)).astype(bool)
+
+
 def parse_pgn_headers(path):
     """Read only PGN headers; no engine/chess parsing is performed."""
     if not path.exists():
@@ -74,14 +87,12 @@ def parse_pgn_headers(path):
     p['game_id'] = p.apply(make_game_id, axis=1)
     p['eco_url'] = p.get('ECOUrl', pd.Series(index=p.index, dtype='object'))
     p['opening_pgn'] = p.get('Opening', pd.Series(index=p.index, dtype='object'))
-    p['opening_from_url'] = p['eco_url'].astype(str).str.rsplit('/', n=1).str[-1]
-    p['opening_from_url'] = p['opening_from_url'].apply(lambda x: unquote(x).replace('-', ' ').replace('_', ' ') if x and x != 'nan' else pd.NA)
     p['utc_time'] = pd.to_datetime(p.get('UTCDate', pd.Series(index=p.index)) .astype(str) + ' ' + p.get('UTCTime', pd.Series(index=p.index)).astype(str), errors='coerce', utc=True)
     p['termination'] = p.get('Termination', pd.Series(index=p.index, dtype='object'))
     p['variant'] = p.get('Variant', pd.Series(index=p.index, dtype='object')).fillna('chess')
     p['rated'] = p.get('Rated', pd.Series(index=p.index, dtype='object')).map({'rated':True,'unrated':False})
     p['link'] = p.get('Link', pd.Series(index=p.index, dtype='object'))
-    keep = ['game_id','White','Black','Result','WhiteElo','BlackElo','TimeControl','ECO','opening_from_url','opening_pgn','eco_url','utc_time','termination','link','CurrentPosition','variant','rated']
+    keep = ['game_id','White','Black','Result','WhiteElo','BlackElo','TimeControl','ECO','opening_pgn','eco_url','utc_time','termination','link','CurrentPosition','variant','rated']
     return p[[c for c in keep if c in p.columns]].drop_duplicates('game_id')
 
 
@@ -120,13 +131,6 @@ def main():
     official_class=g['time_class'].astype('string').str.lower().map({'bullet':'Bullet','blitz':'Blitz','rapid':'Rapid','daily':'Daily','classical':'Classical'})
     g['time_category']=official_class.fillna(g['time_category'])
     g['eco'] = g['eco'].fillna('Unknown').astype(str).str.upper().str.extract(r'([A-E][0-9]{2})', expand=False).fillna('Unknown')
-    g['opening_family'] = g['eco'].str[0].map({
-        'A':'A — Flank / English / Réti / Dutch / Benoni',
-        'B':'B — Sicilian / Caro-Kann / Modern',
-        'C':'C — French / Open Games / Ruy Lopez',
-        'D':'D — Queen’s Gambit / Slav / Grünfeld',
-        'E':'E — Indian Defences / Catalan / Nimzo-Indian / King’s Indian'
-    }).fillna('Unknown / Unclassified')
 
     # Move-level source.
     m = pd.DataFrame(index=m0.index)
@@ -147,7 +151,7 @@ def main():
     m['cpl_for_average'] = m['cpl'].where(~m['mate_score_sentinel'])
     m['classification'] = m['classification'].astype(str).str.lower()
     m['phase'] = m['phase'].astype(str).str.lower()
-    m['is_player_move'] = m['color'].astype(str).str.lower().eq(m['player_color'].astype(str).str.lower())
+    m['is_player_move'] = player_move_mask(m['color'], m['player_color'])
     m['is_error'] = m['classification'].isin(['inaccuracy','mistake','blunder'])
     m['is_major_error'] = m['classification'].isin(['mistake','blunder'])
 
@@ -159,7 +163,6 @@ def main():
         g['black'] = g['Black']
         g['result'] = g['Result']
         g['game_url'] = g['link']
-        g['opening_name'] = g['opening_from_url']
         g['start_time_utc'] = g['utc_time']
         g['termination'] = g['termination'].astype('string')
         g['rules'] = g['variant'].fillna('chess').astype(str).str.lower()
@@ -167,9 +170,18 @@ def main():
         g['black_rating'] = pd.to_numeric(g['BlackElo'], errors='coerce')
         g['day_of_week'] = g['start_time_utc'].dt.day_name()
         g['hour_utc'] = g['start_time_utc'].dt.hour
-        g['opening_name'] = g['opening_name'].fillna(g['opening_pgn']).fillna(g['opening_raw'])
     else:
-        g['white']=pd.NA; g['black']=pd.NA; g['result']=pd.NA; g['game_url']=pd.NA; g['opening_name']=g['opening_raw']; g['start_time_utc']=pd.NaT; g['termination']=pd.NA; g['white_rating']=pd.NA; g['black_rating']=pd.NA; g['day_of_week']=pd.NA; g['hour_utc']=pd.NA; g['rules']=pd.NA; g['rated']=pd.NA
+        g['white']=pd.NA; g['black']=pd.NA; g['result']=pd.NA; g['game_url']=pd.NA; g['start_time_utc']=pd.NaT; g['termination']=pd.NA; g['white_rating']=pd.NA; g['black_rating']=pd.NA; g['day_of_week']=pd.NA; g['hour_utc']=pd.NA; g['rules']=pd.NA; g['rated']=pd.NA
+
+    # Opening names: one rule shared with the dashboard (see src/openings.py).
+    if 'opening_pgn' not in g: g['opening_pgn'] = pd.NA
+    if 'eco_url' not in g: g['eco_url'] = pd.NA
+    eco_table = load_eco_table(DATA / 'openings' / 'eco_names.tsv')
+    resolved = [resolve_opening(e, o, u, eco_table) for e, o, u in zip(g['eco'], g['opening_pgn'], g['eco_url'])]
+    g['eco'] = [r[0] for r in resolved]
+    g['opening_name'] = [r[1] for r in resolved]
+    g['opening_family'] = [r[2] for r in resolved]
+    g['naming_source'] = [r[3] for r in resolved]
 
     # Player-side move statistics. These are computed from already analysed moves.
     pm = m[m['is_player_move']].copy()

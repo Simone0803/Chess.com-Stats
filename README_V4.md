@@ -30,6 +30,21 @@ player-side move rows agree on one account; override it with `CHESSCOM_USERNAME`
 `CHESS_ANALYTICS_DB` to use a different SQLite path, and `CHESS_TIMEZONE` (IANA
 name) to set the dashboard's default calendar timezone.
 
+## Opening names
+
+Each game's opening is named from the best source available, in this order:
+the PGN `[Opening]` tag; a local ECO table `data/openings/eco_names.tsv` (optional,
+columns `eco` and `name`, used only where a code has a single base name); the
+Chess.com opening URL (approximate, because a URL cannot show hyphens inside a name);
+and finally the explicit label `Unknown`. The ECO code is always kept in its own
+column and is never used as a name. The `naming_source` column records which source
+was used.
+
+After updating the code, run `python -m src.process_analysis_v4` again so that the
+processed CSVs use this rule. Older outputs are displayed with `Unknown` until then.
+The repository does not include a naming table; add one from a source whose licence
+you have checked before relying on it.
+
 ## Use games already downloaded
 
 Import an existing PGN without network access:

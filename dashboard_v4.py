@@ -6,15 +6,16 @@ import sqlite3
 import tempfile
 from collections import Counter, defaultdict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-from urllib.parse import unquote, urlsplit
 import pandas as pd
 import numpy as np
 import streamlit as st
 import plotly.express as px
 from src.metrics import grouped_result_summary, longest_streak, rating_summary, result_summary
+from src.openings import load_eco_table, prefer_richer_naming, repair_legacy_opening_names, resolve_from_record
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT/'data'/'processed_v4'
+ECO_TABLE = load_eco_table(ROOT/'data'/'openings'/'eco_names.tsv')
 
 st.set_page_config(page_title='Chess Analytics V4', page_icon='♟', layout='wide')
 
@@ -96,13 +97,7 @@ def archived_rows(username, known_ids=None, known_urls=None, known_signatures=No
             fmt=f'{secs//60}:{secs%60:02d}+{inc}'
         except (ValueError,IndexError): category='Unknown'; fmt=tc or 'Unknown'
         if str(rec.get('time_class') or '').lower()=='daily': category='Daily'
-        eco_candidate=str(headers.get('ECO') or '')
-        if not re.fullmatch(r'[A-Ea-e]\d{2}',eco_candidate):
-            eco_candidate=str(urlsplit(str(rec.get('eco') or '')).path.rstrip('/').split('/')[-1])
-        eco=eco_candidate.upper() if re.fullmatch(r'[A-Ea-e]\d{2}',eco_candidate) else 'Unknown'
-        eco_url=headers.get('ECOUrl') or rec.get('eco') or ''
-        opening_slug=unquote(urlsplit(str(eco_url)).path.rstrip('/').split('/')[-1]).replace('-',' ').replace('_',' ')
-        opening=str(headers.get('Opening') or rec.get('opening') or opening_slug or (f'ECO {eco}' if eco!='Unknown' else 'Unknown'))
+        eco,opening,family,naming=resolve_from_record(rec,ECO_TABLE)
         termination=str(headers.get('Termination') or rec.get('termination') or
                         (opp_result if result=='win' else result) or 'unknown')
         termination_lower=termination.lower()
@@ -117,7 +112,7 @@ def archived_rows(username, known_ids=None, known_urls=None, known_signatures=No
           'opponent_rating':op.get('rating') or headers.get('BlackElo' if white else 'WhiteElo'),
           'time_class':rec.get('time_class') or category.lower(),'time_control':tc,'time_category':category,
           'time_format':fmt,'eco':eco,'opening_raw':opening,'opening_name':opening,
-          'opening_family':(eco[0] if eco[:1] in 'ABCDE' else 'Unknown / Unclassified'),
+          'opening_family':family,'naming_source':naming,
           'player_color':'White' if white else 'Black','moves':np.nan,'accuracy':acc,'acpl':np.nan,
           'inaccuracies':np.nan,'mistakes':np.nan,'blunders':np.nan,'rating_diff':None,
           'player_cpl':np.nan,'player_accuracy':np.nan,'player_errors':np.nan,'player_major_errors':np.nan,
@@ -156,6 +151,7 @@ def load_engine_json(path,modified_ns,size_bytes):
     return json.loads(Path(path).read_text(encoding='utf-8'))
 
 g=load('games_enriched_v4.csv'); m=load('moves_enriched_v4.csv'); phase=load('phase_stats_v4.csv')
+g=repair_legacy_opening_names(g)
 source_game_ids=set(g.game_id.dropna().astype(str)) if 'game_id' in g else set()
 source_game_urls={str(url).rstrip('/'):str(gid) for gid,url in zip(g.get('game_id',[]),g.get('game_url',[]))
                   if pd.notna(url) and str(url).strip()}
@@ -220,6 +216,7 @@ if username:
         archive=pd.DataFrame(rows)
         if g.empty: g=archive
         else:
+            g=prefer_richer_naming(g,archive)
             archive=archive.drop_duplicates('game_id').set_index('game_id')
             for column in archive.columns:
                 if column not in g: g[column]=pd.NA
